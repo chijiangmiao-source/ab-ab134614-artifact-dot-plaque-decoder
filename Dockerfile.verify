@@ -1,0 +1,12 @@
+# syntax=docker/dockerfile:1
+
+# One-shot acceptance service: runs the Vitest unit suite, then the
+# Playwright end-to-end suite against the `web` service (E2E_BASE_URL is
+# injected by docker compose). The image ships matching browsers for the
+# pinned @playwright/test version, so no browser download is needed.
+FROM mcr.microsoft.com/playwright:v1.48.2-jammy
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+COPY . .
+CMD ["sh", "-c", "npm run test:run && npm run e2e"]

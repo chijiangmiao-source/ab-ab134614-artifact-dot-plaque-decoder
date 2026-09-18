@@ -1,0 +1,26 @@
+name: stele-plate-decoder
+
+services:
+  web:
+    build: .
+    image: stele-plate-decoder-web
+    ports:
+      - "${WEB_PORT:-8080}:80"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1/"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+
+  # One-shot acceptance service: `docker compose up --exit-code-from verify verify`
+  verify:
+    image: stele-plate-decoder-verify
+    build:
+      context: .
+      dockerfile: Dockerfile.verify
+    depends_on:
+      web:
+        condition: service_healthy
+    environment:
+      E2E_BASE_URL: http://web:80

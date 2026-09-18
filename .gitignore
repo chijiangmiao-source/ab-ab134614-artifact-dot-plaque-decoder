@@ -2,3 +2,11 @@
 .env
 node_modules/
 __pycache__/
+
+# 构建与测试产物
+dist/
+coverage/
+test-results/
+playwright-report/
+*.log
+.vite/
